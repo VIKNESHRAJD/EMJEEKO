@@ -179,8 +179,8 @@
     </div>
 
     <footer>
-      <p>© 2026 EmjeeKO. All rights reserved.</p>
-      <p>Made with <a href="#">passion</a> &amp; love.</p>
+      <p>© 2025 EmjeeKO. All rights reserved.</p>
+      <p>Made with <a href="#">passion</a> &amp; dark mode.</p>
     </footer>
   </div>
 
@@ -345,16 +345,44 @@
     e.currentTarget.classList.add('active');
   }
 
-  // Contact mailto
-  function sendMail() {
+  // Contact — Formspree
+  async function sendMail() {
     const name    = document.getElementById('f-name').value.trim();
     const email   = document.getElementById('f-email').value.trim();
     const subject = document.getElementById('f-subject').value.trim() || 'Message from EmjeeKO site';
     const message = document.getElementById('f-message').value.trim();
+    const status  = document.getElementById('form-status');
     if (!name || !email || !message) { alert('Please fill in all required fields.'); return; }
-    const body = `Name: ${name}\nFrom: ${email}\n\n${message}`;
-    window.location.href = `mailto:vikneshrajd@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    document.getElementById('form-status').style.display = 'block';
+
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'SENDING...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('https://formspree.io/f/xykndwnr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message })
+      });
+      if (res.ok) {
+        status.textContent = '✓ message sent! i\'ll get back to you soon.';
+        status.style.color = 'var(--accent2)';
+        status.style.display = 'block';
+        document.getElementById('f-name').value = '';
+        document.getElementById('f-email').value = '';
+        document.getElementById('f-subject').value = '';
+        document.getElementById('f-message').value = '';
+        btn.textContent = 'SENT ✓';
+      } else {
+        throw new Error();
+      }
+    } catch {
+      status.textContent = '✗ something went wrong. try again.';
+      status.style.color = 'var(--red)';
+      status.style.display = 'block';
+      btn.textContent = 'SEND_MESSAGE()';
+      btn.disabled = false;
+    }
   }
 </script>
 </body>
